@@ -1,0 +1,7 @@
+# backend
+backend/__pycache__
+backend/models/*
+result_100.csv
+
+# frontend
+frontend/node_modules
