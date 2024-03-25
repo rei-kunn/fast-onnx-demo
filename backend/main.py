@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, Form, HTTPException, File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import Optional
@@ -50,12 +50,14 @@ async def load_and_inder_model(model_path, input_data):
     return "Success" , loading_time
 
 @app.post("/load-model/")
-async def load_model(model_name: ModelName):
-    model_path = f"models/{model_name.modelName}"
+async def load_model(modelName: str = Form(...), videoFile: UploadFile = File(...)):
+    model_path = f"models/{modelName}"
     input_data = np.random.randn(1, 3, 640, 640).astype(np.float32)
+    file_contents = await videoFile.read()
+
     result, loading_time = await load_and_inder_model(model_path, input_data)
 
-    model_idx = get_model_idx(model_name.modelName)
+    model_idx = get_model_idx(modelName)
     if model_idx is not None and model_idx in model_info:
         additional_info = model_info[model_idx]
     else:
